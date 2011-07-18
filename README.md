@@ -1,8 +1,12 @@
 # OddJob #
 
-A simple tool for tracking time
+A simple tool for tracking time.
 
-OddJob stores its data in a text file called '.oddjob', 1 line per entry. 
+Like many unix admins, I always have terminals open. Other time tracking tools carry a lot of overhead, and I only wanted to quickly estimate how much time the unexpected non-project time takes. OddJob should allow me to log these without too much overhead. 
+
+OddJob stores its data in a text file called .oddjob, kept in your home directory, 1 line per entry. 
+
+OddJob requires perl5, but should work with any reasonably current version. It doesn't need any unusual modules. Works fine on Linux, Solaris and OS X. Not tested on Windows.
 
 ## Usage ##
 
@@ -42,3 +46,8 @@ You can also search by passing any other text:
 ## TODO ##
 
 Summary/stats scripts.
+
+## License ##
+
+OddJob is released under the GPLv2 license. See the COPYING file for
+details.
