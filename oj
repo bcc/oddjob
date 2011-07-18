@@ -1,0 +1,102 @@
+#!/usr/bin/perl
+
+# OddJob - a simple tool for tracking time
+
+use strict;
+
+my $command = shift;
+
+my $data = $ENV{'HOME'} . "/.oddjob";
+my $ymd = sub{sprintf '%04d-%02d-%02d', $_[5]+1900, $_[4]+1, $_[3]}->(localtime);
+my $elapsed_regex = '^\d+[hmsd]$';
+my %fields = ('date' => 0, 'time' => 1, 'cat' => 2, 'desc' => 3);
+
+if ($command eq 'add') {
+    my $elapsed = shift;
+    my $category = shift;
+    my $description = join(' ', @ARGV);
+
+    if ($elapsed !~ /$elapsed_regex/) {
+        &usage;
+    }
+
+    open F, ">>$data";
+    print F "$ymd\t$elapsed\t$category\t$description\n";
+    close F;
+}
+
+elsif ($command eq 'edit') {
+    my $id = shift;
+    my $args = join(' ', @ARGV);
+
+    if ($id !~ /^\d+$/) {
+        &usage;
+    }
+
+    open F, $data;
+    my @lines = (<F>);
+    close F;
+
+    die ("Invalid ID\n") if ($id > $#lines);
+  
+    chomp($lines[$id]) ;
+    my @edits = split(/\t+/, $lines[$id]); 
+    
+    my $f = join('|', keys %fields);
+    if (my ($key, $value) = ($args =~ m/^($f)=(.*)/)) {
+
+        if (($1 eq 'date') && ($2 !~ /^\d{4}-\d{2}-\d{2}$/)) {
+            die "Invalid date format, must be YYYY-MM-DD\n";
+        }
+        if (($1 eq 'time') && ($2 !~ /$elapsed_regex/)) {
+            die "Invalid time format, must match $elapsed_regex\n";
+        }
+
+        $edits[$fields{$key}] = $value;
+        $lines[$id] = "" . join("\t", @edits) . "\n";
+        open F, ">$data";
+        print F join('', @lines);
+        close F;
+    } else { 
+        &usage;
+    }
+
+    
+}
+
+elsif ($command eq 'list') {
+
+    my $args = join (' ', @ARGV);
+
+    open F, $data;
+    my @lines = (<F>);
+    close F;
+    
+    if ($args =~ m/\-(\d+)/) {
+        # head
+        my $from = $#lines - $1 +1;
+        $from = 0 if ($from < 0);
+        for (my $i = $from; $i <= $#lines; $i++) {
+            print "$i\t" . $lines[$i];
+        }
+    } else {
+        # grep
+        for (my $i = 0; $i <= $#lines; $i++) {
+            print "$i\t$lines[$i]" if ($lines[$i] =~ /$args/);
+        }
+    }
+ 
+
+} else {
+    &usage;
+}
+
+sub usage (){
+    print "OddJob, a simple tool for tracking time.\n";
+    print "Usage:\n";
+    print "  oj add <time> <category> <description>\n";
+    print "  oj list [string]\n";
+    print "  oj list [-lines]\n";
+    print "  oj edit <id> (date|time|cat|desc)=<new value>\n";
+    exit;
+}
