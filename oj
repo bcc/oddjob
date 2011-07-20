@@ -80,7 +80,7 @@ elsif ($command eq 'edit') {
     
 }
 
-elsif ($command eq 'list') {
+elsif ($command eq 'list' or $command eq 'ls') {
 
     my $args = join (' ', @ARGV);
 
@@ -111,8 +111,8 @@ sub usage (){
     print "OddJob, a simple tool for tracking time.\n";
     print "Usage:\n";
     print "  oj add <time> <category> <description>\n";
-    print "  oj list [string]\n";
-    print "  oj list [-lines]\n";
+    print "  oj list|ls [string]\n";
+    print "  oj list|ls [-lines]\n";
     print "  oj edit <id> (date|time|cat|desc)=<new value>\n";
     exit;
 }

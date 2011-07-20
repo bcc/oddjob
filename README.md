@@ -12,8 +12,8 @@ OddJob requires perl5, but should work with any reasonably current version. It d
 
     Usage:
       oj add <time> <category> <description>
-      oj list [string]
-      oj list [-lines]
+      oj list|ls [string]
+      oj list|ls [-lines]
       oj edit <id> (date|time|cat|desc)=<new value>
 
 To add a new entry:
